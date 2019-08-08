@@ -1,5 +1,5 @@
 /* Copyright (c) 2006, 2007, 2008  Eric B. Weddington
-   Copyright (c) 2011 Frédéric Nadeau
+   Copyright (c) 2011 FrÃ©dÃ©ric Nadeau
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
@@ -61,7 +61,7 @@ find out which macros are applicable to your device.
 
 \note For device using the XTAL Divide Control Register (XDIV), when prescaler
 is used, Timer/Counter0 can only be used in asynchronous mode. Keep in mind
-that Timer/Counter0 source shall be less than ¼th of peripheral clock.
+that Timer/Counter0 source shall be less than Â¼th of peripheral clock.
 Therefore, when using a typical 32.768 kHz crystal, one shall not scale
 the clock below 131.072 kHz.
 
@@ -734,6 +734,15 @@ the clock below 131.072 kHz.
 #define power_twi_disable()             (PRR0 |= (uint8_t)(1 << PRTWI))
 #endif
 
+#if defined(__AVR_HAVE_PRR0_PRTWI0)
+#define power_twi0_enable()             (PRR0 &= (uint8_t)~(1 << PRTWI0))
+#define power_twi0_disable()            (PRR0 |= (uint8_t)(1 << PRTWI0))
+#if not defined(__AVR_HAVE_PRR0_PRTWI)
+#define power_twi_enable()              power_twi0_enable()
+#define power_twi_disable()             power_twi0_disable()
+#endif
+#endif
+
 #if defined(__AVR_HAVE_PRR0_PRTWI1)
 #define power_twi1_enable()             (PRR0 &= (uint8_t)~(1 << PRTWI1))
 #define power_twi1_disable()            (PRR0 |= (uint8_t)(1 << PRTWI1))
@@ -882,6 +891,21 @@ the clock below 131.072 kHz.
 #if defined(__AVR_HAVE_PRR1_PRUSBH)
 #define power_usbh_enable()             (PRR1 &= (uint8_t)~(1 << PRUSBH))
 #define power_usbh_disable()            (PRR1 |= (uint8_t)(1 << PRUSBH))
+#endif
+
+#if defined(__AVR_HAVE_PRR1_PRSPI1)
+#define power_spi1_enable()             (PRR1 &= (uint8_t)~(1 << PRSPI1))
+#define power_spi1_disable()            (PRR1 |= (uint8_t)(1 << PRSPI1))
+#endif
+
+#if defined(__AVR_HAVE_PRR1_PRPTC)
+#define power_ptc_enable()              (PRR1 &= (uint8_t)~(1 << PRPTC))
+#define power_ptc_disable()             (PRR1 |= (uint8_t)(1 << PRPTC))
+#endif
+
+#if defined(__AVR_HAVE_PRR1_PRTWI1)
+#define power_twi1_enable()             (PRR1 &= (uint8_t)~(1 << PRTWI1))
+#define power_twi1_disable()            (PRR1 |= (uint8_t)(1 << PRTWI1))
 #endif
 
 #if defined(__AVR_HAVE_PRR2_PRDF)
@@ -1351,6 +1375,7 @@ __power_all_disable()
 || defined(__AVR_ATmega3250PA__) \
 || defined(__AVR_ATmega328__) \
 || defined(__AVR_ATmega328P__) \
+|| defined(__AVR_ATmega328PB__) \
 || defined(__AVR_ATmega329__) \
 || defined(__AVR_ATmega329A__) \
 || defined(__AVR_ATmega329P__) \
